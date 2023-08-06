@@ -175,7 +175,25 @@ class IncidentController {
 
                     header("Location: IncidentController.php?action=view&id=$incidentID");
 
+                    /////////////////////
+                    require '../../vendor/autoload.php';
 
+                    $options = array(
+                        'cluster' => 'eu',
+                        'useTLS' => true
+                    );
+                    $pusher = new Pusher\Pusher(
+                        'b9bb573bc0dea8d0224c',
+                        '2529a66a523ae5fa58cf',
+                        '1646396',
+                        $options
+                    );
+
+
+
+                    $data['messagebody'] = $message->getBody();
+                    $pusher->trigger('my-channel', 'messagesent', $data);
+                    /////////////////////
                 }
                 else
                     throw new Exception();

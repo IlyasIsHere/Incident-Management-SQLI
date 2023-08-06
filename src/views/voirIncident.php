@@ -150,5 +150,21 @@ $role = $_SESSION['role'];
         }
     </script>
 
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('b9bb573bc0dea8d0224c', {
+            cluster: 'eu'
+        });
+
+        var channel = pusher.subscribe('my-channel');
+        channel.bind('messagesent', function(data) {
+            document.body.innerHTML += JSON.stringify(data);
+        });
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  db:
+    build: db
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+
+  php-apache:
+    build: .
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      HOST: db
+    depends_on:
+      - db
+    volumes:
+      - uploaded-files:/var/www/html/src/uploads
+      - ./src:/var/www/html/src
+      - ./index.php:/var/www/html/index.php
+
+
+  phpmyadmin:
+    image: phpmyadmin:apache
+    ports:
+      - "8080:80"
+    restart: always
+
+
+volumes:
+  mysql-data:
+  uploaded-files:
+

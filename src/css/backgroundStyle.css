@@ -1,0 +1,61 @@
+/* ----------- Navbar style ------------- */
+
+.nav-link:hover {
+    border-bottom: solid 4px #af38ff;
+    /*border-bottom: solid 3px #7d18ee;*/
+    box-sizing: border-box;
+    margin-bottom: -8px;
+    transition: .1s border-bottom-width;
+
+}
+
+.nav-link {
+    transition: 50ms border-bottom-width;
+}
+
+.navbar {
+    background: #b3c4ff;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #dca0ff, #b3c4ff);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #dca0ff, #b3c4ff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+/* ------------------------------ */
+
+body {
+    /*background-color: #E6E6FA!important;*/
+
+    background: hsla(259, 84%, 78%, 1);
+
+    background: linear-gradient(180deg, hsla(259, 84%, 78%, 1) 0%, hsla(206, 67%, 75%, 1) 100%);
+
+    background: -moz-linear-gradient(180deg, hsla(259, 84%, 78%, 1) 0%, hsla(206, 67%, 75%, 1) 100%);
+
+    background: -webkit-linear-gradient(180deg, hsla(259, 84%, 78%, 1) 0%, hsla(206, 67%, 75%, 1) 100%);
+}
+h2, h1, h4 {
+    color: #533473!important;
+}
+
+.odd td {
+    background-color: rgb(212, 218, 255) !important;
+}
+
+.even td {
+    background-color: rgb(229, 231, 255) !important;
+}
+
+.card {
+    background: linear-gradient(90deg, hsl(233, 100%, 92%) 0%, hsl(211, 100%, 84%) 100%);
+}
+
+thead th {
+    background-color: #ceadff !important;
+}
+
+td {
+    border-color: #c2c5f1 !important;
+}
+
+th {
+    border-color: rgba(205, 114, 253, 0.62) !important;
+}

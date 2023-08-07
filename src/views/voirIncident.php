@@ -111,7 +111,7 @@ $role = $_SESSION['role'];
                 ?>
             </div>
             <div class="card-footer">
-                <form method="POST" action="IncidentController.php?action=sendmsg&id=<?php echo $incidentID; ?>">
+                <form method="POST" action="" id="chatForm">
                     <div class="d-flex flex-row gap-1">
                         <textarea class="form-control" placeholder="Ecrivez votre message ici" name="msgBody" id="msgInput" required></textarea>
                         <button type="submit" class="btn btn-primary" id="submitBtn">Envoyer</button>
@@ -138,7 +138,7 @@ $role = $_SESSION['role'];
             const $msgInput = $("#msgInput");
 
             function scrollChatboxToBottom() {
-                $chatbox.scrollTop($chatbox[0].scrollHeight);
+                $chatbox.animate({scrollTop: $chatbox[0].scrollHeight}, 1000);
             }
 
             scrollChatboxToBottom();
@@ -152,6 +152,23 @@ $role = $_SESSION['role'];
                     $("#submitBtn").click();
                 }
             });
+
+            $("#chatForm").on("submit", function(event) {
+                event.preventDefault();
+
+                $.post( "IncidentController.php?action=sendmsg&id=<?= $incidentID ?>", $("#chatForm").serialize() )
+                    .done(function() {
+
+                        let sentMsg = $msgInput.val();
+                        let sentMsgDiv = "<div class='d-flex justify-content-end'><div class='card shadow p-2 mb-1 bg-gradient bg-primary text-white'>" + sentMsg + "</div></div>";
+                        document.getElementById("chatbox").innerHTML += sentMsgDiv;
+
+                        scrollChatboxToBottom();
+                        $msgInput.val("");
+
+                    })
+
+            })
 
             const incidentID = <?= $incidentID ?>;
             const role = <?= json_encode($role) ?>;

@@ -191,8 +191,12 @@ class IncidentController {
 
 
 
-                    $data['messagebody'] = $message->getBody();
+                    $data['body'] = $message->getBody();
+                    $data['sender'] = $message->getSender();
+                    $data['incidentID'] = $message->getIdIncident();
+
                     $pusher->trigger('my-channel', 'messagesent', $data);
+
                     /////////////////////
                 }
                 else

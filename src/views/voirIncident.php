@@ -129,13 +129,19 @@ $role = $_SESSION['role'];
     </div>
 
 
-    <script>
-        const $chatbox = $("#chatbox");
-        const $msgInput = $("#msgInput");
+    <?php if ($canViewDiscussion) { ?>
 
-        if ($chatbox.length !== 0 && $msgInput.length !== 0) {
+        <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+        <script>
 
-            $chatbox.scrollTop($chatbox[0].scrollHeight);
+            const $chatbox = $("#chatbox");
+            const $msgInput = $("#msgInput");
+
+            function scrollChatboxToBottom() {
+                $chatbox.scrollTop($chatbox[0].scrollHeight);
+            }
+
+            scrollChatboxToBottom();
 
             $msgInput.focus();
 
@@ -147,30 +153,33 @@ $role = $_SESSION['role'];
                 }
             });
 
-        }
+            const incidentID = <?= $incidentID ?>;
+            const role = <?= json_encode($role) ?>;
 
-    </script>
+            // Enable pusher logging - don't include this in production
+            // Pusher.logToConsole = true;
 
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script>
+            var pusher = new Pusher('b9bb573bc0dea8d0224c', {
+                cluster: 'eu'
+            });
 
+            var channel = pusher.subscribe('my-channel');
+            channel.bind('messagesent', function(data) {
+                const msg_incidentID = data.incidentID;
+                const msg_sender = data.sender;
+                const msg_body = data.body;
 
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
+                if (msg_incidentID == incidentID && msg_sender != role) {
+                    const msg_div = "<div class='d-flex justify-content-start'><div class='card shadow p-2 mb-1 bg-gradient bg-light'>" + msg_body + "</div></div>";
+                    document.getElementById("chatbox").innerHTML += msg_div;
+                    scrollChatboxToBottom();
+                }
 
-        var pusher = new Pusher('b9bb573bc0dea8d0224c', {
-            cluster: 'eu'
-        });
+            });
 
-        var channel = pusher.subscribe('my-channel');
-        channel.bind('messagesent', function(data) {
-            document.body.innerHTML += JSON.stringify(data);
-            console.log(data);
-            console.log(typeof data)
-            // document.body.innerHTML += "hello\n";
+        </script>
 
-        });
-    </script>
+    <?php } ?>
 
 </body>
 </html>

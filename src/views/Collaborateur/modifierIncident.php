@@ -44,13 +44,13 @@ else {
     <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
 </head>
-<body>
+<body class="pb-5">
     <?php include 'navbarCollaborateur.php'; ?>
 
     <div class="container-fluid mt-5 ps-sm-5 pe-sm-5">
         <div class="card shadow-lg col-sm-10 col-lg-6 mx-auto">
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data" action="../../controllers/IncidentController.php?action=edit&id=<?php echo $incidentID; ?>">
+                <form method="POST" id="form" enctype="multipart/form-data" action="../../controllers/IncidentController.php?action=edit&id=<?php echo $incidentID; ?>">
                     <div class="form-floating mb-2">
                         <select class="form-select" id="selectType" name="type">
                             <option value="Réseau" <?php echo $type == 'Réseau' ? 'selected' : ''; ?>>Réseau</option>
@@ -113,10 +113,32 @@ else {
                     }
                     ?>
 
-                    <button type="submit" class="btn btn-primary col-sm-4 float-end">Modifier</button>
+                    <button type="button" class="btn btn-primary col-sm-4 float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">Modifier</button>
 
 
                 </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmer</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>Voulez vous vraiment supprimer les fichiers sélectionnés?</div>
+                    <div><small>Cet action est irréversible!</small></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary" form="form">Confirmer</button>
+                </div>
             </div>
         </div>
     </div>

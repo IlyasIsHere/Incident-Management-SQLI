@@ -98,7 +98,7 @@ require_once '../../models/Incident.php';
                         echo '<td class="">';
 
                         echo "<div class='d-flex justify-content-center gap-sm-3'>";
-                        echo "<a href='../../controllers/IncidentController.php?action=delete&id=$incidentID' class='hover-up'><i class='fa-solid fa-trash fa-lg' style='color: #ff0000;'></i></a>";
+                        echo "<a data-bs-toggle='modal' href='#exampleModal' data-href='../../controllers/IncidentController.php?action=delete&id=$incidentID' class='hover-up'><i class='fa-solid fa-trash fa-lg' style='color: #ff0000;'></i></a>";
                         echo "<a href='../../views/Collaborateur/modifierIncident.php?id=$incidentID' class='hover-up'><i class='fa-solid fa-pen-to-square fa-lg' style='color: #00ad00;'></i></a>";
                         echo "<a href='../../controllers/IncidentController.php?action=view&id=$incidentID' class='hover-up'><i class='fa-solid fa-eye fa-lg' style='color: #005eff;'></i></a>";
 
@@ -127,12 +127,42 @@ require_once '../../models/Incident.php';
         </div>
     </div>
 
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>Voulez vous vraiment supprimer cet incident?</div>
+                    <div><small>Cet action est irréversible!</small></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <a class="btn btn-danger" id="confirmBtn">Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         $('#table').DataTable( {
             fixedHeader: true
         } );
 
         $("#table").parent().addClass("table-responsive");
+
+        $("#exampleModal").on("show.bs.modal", function(event) {
+            const rowBtn = $(event.relatedTarget);
+            const url = rowBtn.attr("data-href");
+
+            $("#confirmBtn").attr("href", url);
+        });
+
     </script>
 
 </body>

@@ -26,6 +26,9 @@ services:
       - ./src:/var/www/html/src
       - ./index.php:/var/www/html/index.php
 
+    env_file:
+      - mercure-variables.env
+
 
   phpmyadmin:
     image: phpmyadmin:apache
@@ -38,14 +41,17 @@ services:
     restart: unless-stopped
     environment:
       # Uncomment the following line to disable HTTPS
-      #SERVER_NAME: ':80'
-      MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-      MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
-    # Uncomment the following line to enable the development mode
-    command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
+      SERVER_NAME: ':80'
+      MERCURE_EXTRA_DIRECTIVES: |-
+        cors_origins http://localhost
+
+
+    env_file:
+      - mercure-variables.env
+
+
     ports:
       - '3000:80'
-      - '443:443'
     volumes:
       - mercure_data:/data
       - mercure_config:/config

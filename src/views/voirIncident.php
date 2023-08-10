@@ -4,6 +4,25 @@ require '../controllers/accessController.php';
 
 $userID = $_SESSION['id'];
 $role = $_SESSION['role'];
+
+// Generate JWT
+require_once '../../vendor/autoload.php';
+use Firebase\JWT\JWT;
+$key = getenv("MERCURE_SUBSCRIBER_JWT_KEY");
+
+$headers = [
+    "alg" => "HS256",
+    "typ" => "JWT"
+];
+
+$payload = [
+    'mercure' => [
+        'subscribe' => ["https://chat.com/incidents/$incidentID"]
+    ]
+];
+
+$jwt = JWT::encode($payload, $key, 'HS256', null, $headers);
+setcookie('mercureAuthorization', $jwt, path: '/.well-known/mercure');
 ?>
 
 <!doctype html>
@@ -131,7 +150,6 @@ $role = $_SESSION['role'];
 
     <?php if ($canViewDiscussion) { ?>
 
-        <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
         <script>
 
             const $chatbox = $("#chatbox");
@@ -168,31 +186,28 @@ $role = $_SESSION['role'];
 
                     })
 
-            })
+            });
 
             const incidentID = <?= $incidentID ?>;
             const role = <?= json_encode($role) ?>;
 
-            // Enable pusher logging - don't include this in production
-            // Pusher.logToConsole = true;
+            const url = new URL('http://localhost:3000/.well-known/mercure');
+            url.searchParams.append('topic', 'https://chat.com/incidents/' + incidentID);
 
-            var pusher = new Pusher('b9bb573bc0dea8d0224c', {
-                cluster: 'eu'
-            });
+            const eventSource = new EventSource(url, {withCredentials: true});
 
-            var channel = pusher.subscribe('my-channel');
-            channel.bind('messagesent', function(data) {
-                const msg_incidentID = data.incidentID;
-                const msg_sender = data.sender;
+            eventSource.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                const msg_sender = data.sender
                 const msg_body = data.body;
 
-                if (msg_incidentID == incidentID && msg_sender != role) {
-                    const msg_div = "<div class='d-flex justify-content-start'><div class='card shadow p-2 mb-1 bg-gradient bg-light'>" + msg_body + "</div></div>";
+                let msg_div;
+                if (msg_sender != role) {
+                    msg_div = "<div class='d-flex justify-content-start'><div class='card shadow p-2 mb-1 bg-gradient bg-light'>" + msg_body + "</div></div>";
                     document.getElementById("chatbox").innerHTML += msg_div;
                     scrollChatboxToBottom();
                 }
-
-            });
+            };
 
         </script>
 

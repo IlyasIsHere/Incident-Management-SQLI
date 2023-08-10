@@ -19,7 +19,8 @@ RUN apt-get update && apt-get install -y \
     unzip
 RUN docker-php-ext-install zip
 
-RUN composer require pusher/pusher-php-server
+RUN composer require pusher/pusher-php-server &&\
+    composer require firebase/php-jwt
 
 
 

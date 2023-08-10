@@ -8,6 +8,9 @@ require_once $_SERVER["DOCUMENT_ROOT"] . '/src/models/Incident.php';
 require_once $_SERVER["DOCUMENT_ROOT"] . '/src/models/Utilisateur.php';
 require_once $_SERVER["DOCUMENT_ROOT"] . '/src/models/Message.php';
 
+use Firebase\JWT\JWT;
+
+
 const ERR_MAX_FILESIZE_EXCEEDED = 1;
 const FILES_EMPTY = 2;
 
@@ -173,31 +176,13 @@ class IncidentController {
             try {
                 if ($message->writeMsgToDB() && $this->incidentModel->updateLastMessageSender($role)) {
 
-                    header("Location: IncidentController.php?action=view&id=$incidentID");
-
-                    /////////////////////
-                    require '../../vendor/autoload.php';
-
-                    $options = array(
-                        'cluster' => 'eu',
-                        'useTLS' => true
-                    );
-                    $pusher = new Pusher\Pusher(
-                        'b9bb573bc0dea8d0224c',
-                        '2529a66a523ae5fa58cf',
-                        '1646396',
-                        $options
-                    );
-
-
+//                    header("Location: IncidentController.php?action=view&id=$incidentID");
 
                     $data['body'] = $message->getBody();
                     $data['sender'] = $message->getSender();
-                    $data['incidentID'] = $message->getIdIncident();
 
-                    $pusher->trigger('my-channel', 'messagesent', $data);
+                    $this->mercurePublishPrivateMessage($data);
 
-                    /////////////////////
                 }
                 else
                     throw new Exception();
@@ -292,6 +277,51 @@ class IncidentController {
             if (file_exists($file))
                 unlink($file);
         }
+    }
+
+    public function mercurePublishPrivateMessage($data)
+    {
+        $incidentID = $this->incidentModel->getID();
+        require_once '../../vendor/autoload.php';
+
+        // Generating the JWT key
+
+        $publisherKey = getenv("MERCURE_PUBLISHER_JWT_KEY");
+        $topic = "https://chat.com/incidents/$incidentID";
+
+        $headers = [
+            "alg" => "HS256",
+            "typ" => "JWT"
+        ];
+
+        $payload = [
+            'mercure' => [
+                'publish' => [$topic]
+            ]
+        ];
+
+        $jwt = JWT::encode($payload, $publisherKey, 'HS256', null, $headers);
+
+
+        // Publishing to mercure hub through POST request
+        $postData = http_build_query([
+            'topic' => $topic,
+            'data' => json_encode($data),
+            'private' => 'on'
+        ]);
+
+        echo file_get_contents(
+            'http://mercure/.well-known/mercure',
+            false,
+            stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\nAuthorization: Bearer $jwt",
+                    'content' => $postData
+                ]
+            ])
+        );
+
     }
 
 

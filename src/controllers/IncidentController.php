@@ -392,7 +392,12 @@ if (isset($_GET['action'])) {
                     header('Location: ../views/Collaborateur/creerIncident.php?error=' . ERR_MAX_FILESIZE_EXCEEDED);
                     break;
 
+                case FILES_EMPTY:
+                    header('Location: ../views/Collaborateur/AccueilCollaborateur.php?msg=add');
+                    break;
+
                 case 0:
+                    $controller->uploadIncidentFiles($incidentID);
                     header('Location: ../views/Collaborateur/AccueilCollaborateur.php?msg=add');
                     break;
             }

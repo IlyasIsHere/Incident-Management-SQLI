@@ -15,6 +15,7 @@ This repository contains the codebase for an **incident management web applicati
    - **Backend**: The backend is powered by PHP based on the MVC design pattern, which handles user authentication, incident data storage, and real-time chat functionality. Real-time chat was implemented using SSEs (Server-sent events), and the Mercure hub API.
    - **Database**: MySQL is used to store incident details and chat messages.
    - **Containerization**: Docker ensures consistent and easy deployment across different environments.
+   - **Authorization**: JWT (JSON Web Token) is used for authorization in the real-time chat feature.
 
 ## Installation
 

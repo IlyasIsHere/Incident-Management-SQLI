@@ -416,13 +416,18 @@ if (isset($_GET['action'])) {
         if (Incident::addIncident($userID, $type, $titre, $date, $description)) {
             $incidentID = $db->lastInsertId();
 
-            switch ($controller->uploadAllFiles($incidentID)) {
+            switch ($controller->validateFiles()) {
                 case ERR_MAX_FILESIZE_EXCEEDED:
                     Incident::deleteIncidentByID($incidentID);
                     header('Location: ../views/Collaborateur/creerIncident.php?error=' . ERR_MAX_FILESIZE_EXCEEDED);
                     break;
 
+                case FILES_EMPTY:
+                    header('Location: ../views/Collaborateur/AccueilCollaborateur.php?msg=add');
+                    break;
+
                 case 0:
+                    $controller->uploadIncidentFiles($incidentID);
                     header('Location: ../views/Collaborateur/AccueilCollaborateur.php?msg=add');
                     break;
             }
